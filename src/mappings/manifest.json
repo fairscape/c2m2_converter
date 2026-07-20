@@ -1,0 +1,25 @@
+{
+  "_doc": "Load order for the mapping-driven C2M2 -> RO-Crate converter (c2m2_convert.py). 'root' fills the crate root/identity; 'entities' are the per-table row-explosion mappings, applied in each file's 'order'. The 14 CFDE C2M2 controlled-vocabulary (CV term) tables are a class of their own -> each becomes a schema.org DefinedTerm and lives under mappings/cv/. Extending coverage = add a file to 'entities'.",
+  "root": "root.json",
+  "entities": [
+    "file.json",
+    "subject.json",
+    "biosample.json",
+    "collection.json",
+    "cv/anatomy.json",
+    "cv/biofluid.json",
+    "cv/sample_prep_method.json",
+    "cv/assay_type.json",
+    "cv/analysis_type.json",
+    "cv/data_type.json",
+    "cv/file_format.json",
+    "cv/disease.json",
+    "cv/phenotype.json",
+    "cv/ncbi_taxonomy.json",
+    "cv/gene.json",
+    "cv/protein.json",
+    "cv/substance.json",
+    "cv/compound.json"
+  ],
+  "follow_on": []
+}

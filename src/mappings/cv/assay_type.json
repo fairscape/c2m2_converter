@@ -1,0 +1,37 @@
+{
+  "_doc": "C2M2 assay_type CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. 'usedBy' back-references files whose assay_type column resolves to this OBI term.",
+  "source_table": "assay_type",
+  "entity_type": "DefinedTerm",
+  "order": 33,
+
+  "cv_source": {"column": "id", "source_table": "assay_type"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "assay_type"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-assay_type"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "assay_type"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 assay type controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "assay_type"}
+  ],
+
+  "associations": [
+    {
+      "_note": "Back-reference: match is THIS assay_type node (resolved from the file.assay_type column); the value is the file carrying it.",
+      "assoc_table": "file",
+      "match": {"columns": ["assay_type"], "resolver": "ontology_term", "source_table": "assay_type"},
+      "value": {"columns": ["id_namespace", "local_id"], "resolver": "entity_guid", "entity": "file"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

@@ -1,0 +1,129 @@
+{
+  "name": "AI-Ready Score for Cell Maps for Artificial Intelligence",
+  "fairness": {
+    "findable": {
+      "has_content": true,
+      "details": "Dataset has persistent identifier: ark:59853/cm4ai-c2m2"
+    },
+    "accessible": {
+      "has_content": true,
+      "details": "The RO-Crate's JSON-LD metadata is machine-readable and publicly accessible by design."
+    },
+    "interoperable": {
+      "has_content": true,
+      "details": "The dataset uses the schema.org vocabulary within the RO-Crate framework and conforms to the Croissant RAI specification for interoperability."
+    },
+    "reusable": {
+      "has_content": true,
+      "details": "License: https://creativecommons.org/licenses/by/4.0/"
+    }
+  },
+  "provenance": {
+    "transparent": {
+      "has_content": true,
+      "details": "28 dataset(s) documented"
+    },
+    "traceable": {
+      "has_content": true,
+      "details": "1 computation/experiment steps documented"
+    },
+    "interpretable": {
+      "has_content": true,
+      "details": "1 software instances documented"
+    },
+    "key_actors_identified": {
+      "has_content": true,
+      "details": "Author specified, Publisher: NIH Common Fund Data Ecosystem"
+    }
+  },
+  "characterization": {
+    "semantics": {
+      "has_content": true,
+      "details": "Data is semantically described using the schema.org vocabulary within a machine-readable RO-Crate."
+    },
+    "statistics": {
+      "has_content": true,
+      "details": "Total size: 19.3 TB"
+    },
+    "standards": {
+      "has_content": true,
+      "details": "19 schema(s) documented"
+    },
+    "potential_sources_of_bias": {
+      "has_content": false,
+      "details": "No bias description provided. To document biases, set 'rai:dataBiases' in root dataset"
+    },
+    "data_quality": {
+      "has_content": false,
+      "details": "Data quality procedures not documented. To document quality, set 'rai:dataCollectionMissingData' in root dataset"
+    }
+  },
+  "pre_model_explainability": {
+    "data_documentation_template": {
+      "has_content": true,
+      "details": "Documentation is provided via the RO-Crate's structured JSON-LD metadata, this HTML Datasheet, and Croissant RAI properties."
+    },
+    "fit_for_purpose": {
+      "has_content": false,
+      "details": "No use cases or limitations specified. To document purpose, set 'rai:dataUseCases' and/or 'rai:dataLimitations' in root dataset"
+    },
+    "verifiable": {
+      "has_content": true,
+      "details": "23% of files have checksums (7/30)"
+    }
+  },
+  "ethics": {
+    "ethically_acquired": {
+      "has_content": false,
+      "details": "No ethical acquisition information. To document data collection, set 'rai:dataCollection' and/or additionalProperty with name='Human Subject' in root dataset"
+    },
+    "ethically_managed": {
+      "has_content": false,
+      "details": "No ethical management information. To document ethical oversight, set 'ethicalReview' and/or additionalProperty with name='Data Governance Committee' in root dataset"
+    },
+    "ethically_disseminated": {
+      "has_content": true,
+      "details": "License: https://creativecommons.org/licenses/by/4.0/"
+    },
+    "secure": {
+      "has_content": false,
+      "details": "No security requirements specified. To document security level, set 'confidentialityLevel' in root dataset"
+    }
+  },
+  "sustainability": {
+    "persistent": {
+      "has_content": true,
+      "details": "Dataset has persistent identifier: ark:59853/cm4ai-c2m2"
+    },
+    "domain_appropriate": {
+      "has_content": false,
+      "details": "Data release plan not documented. To add a release plan, set 'rai:dataReleaseMaintenancePlan' in root dataset"
+    },
+    "well_governed": {
+      "has_content": false,
+      "details": "No governance structure specified. To document governance, set additionalProperty with name='Data Governance Committee' in root dataset"
+    },
+    "associated": {
+      "has_content": true,
+      "details": "All data, software, and computations are explicitly linked within the RO-Crate's provenance graph."
+    }
+  },
+  "computability": {
+    "standardized": {
+      "has_content": true,
+      "details": "Formats: application/json, application/octet-stream, application/vnd.sqlite3, text/tab-separated-values, text/x-python"
+    },
+    "computationally_accessible": {
+      "has_content": true,
+      "details": "Publisher: NIH Common Fund Data Ecosystem"
+    },
+    "portable": {
+      "has_content": true,
+      "details": "The dataset is packaged as a self-contained RO-Crate, a standard designed for portability across systems."
+    },
+    "contextualized": {
+      "has_content": true,
+      "details": "Context is provided by the RO-Crate's graph structure and detailed in properties such as rai:dataLimitations."
+    }
+  }
+}

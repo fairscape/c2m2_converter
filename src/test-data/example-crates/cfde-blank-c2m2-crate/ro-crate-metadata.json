@@ -1,0 +1,172 @@
+{
+  "@context": {
+    "@vocab": "https://schema.org/",
+    "evi": "https://w3id.org/EVI#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "cfde": "https://w3id.org/cfde/terms#"
+  },
+  "@graph": [
+    {
+      "@id": "ro-crate-metadata.json",
+      "@type": "CreativeWork",
+      "conformsTo": {
+        "@id": "https://w3id.org/ro/crate/1.2"
+      },
+      "about": {
+        "@id": "ark:59853/cfde-blank-c2m2"
+      },
+      "fairscapeVersion": "1.1.3"
+    },
+    {
+      "@id": "ark:59853/cfde-blank-c2m2",
+      "@type": [
+        "Dataset",
+        "https://w3id.org/EVI#ROCrate"
+      ],
+      "conformsTo": {
+        "@id": "https://w3id.org/fairscape/profile/0.1"
+      },
+      "name": "cfde-blank \u2014 C2M2 Metadata Instance (RO-Crate)",
+      "description": "RO-Crate packaging of the CFDE C2M2 Frictionless datapackage for the cfde-blank dataset. It preserves the C2M2 relational tables (TSV), the datapackage schema, and the SQLite relational index verbatim, and overlays schema.org/EVI provenance plus file-level links back to the source data. The relational contract (primary/foreign keys) travels as cfde:* extension fields so the C2M2 relational model can be reconstituted.",
+      "keywords": [
+        "CFDE",
+        "C2M2",
+        "cfde-blank",
+        "metadata",
+        "RO-Crate",
+        "Frictionless",
+        "provenance"
+      ],
+      "version": "1.0",
+      "datePublished": "2026-07-07",
+      "isPartOf": [
+        {
+          "@id": "https://cfde.cloud"
+        }
+      ],
+      "hasPart": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-datapackage-json"
+        },
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-conversion"
+        },
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-converter-software"
+        }
+      ],
+      "author": "CFDE / cfde-blank DCC",
+      "publisher": "NIH Common Fund Data Ecosystem",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "cfde:c2m2Level": "1",
+      "cfde:tablesTotal": 58,
+      "cfde:tablesPopulated": 0,
+      "cfde:emptyTablesNote": "58 of the 58 C2M2 tables are empty for this instance and are omitted from @graph; their full schema (fields/PK/FK) is preserved in C2M2_datapackage.json. Populated tables: ."
+    },
+    {
+      "@id": "ark:59853/cfde-blank-c2m2-datapackage-json",
+      "@type": [
+        "prov:Entity",
+        "https://w3id.org/EVI#Dataset"
+      ],
+      "name": "C2M2_datapackage.json",
+      "isPartOf": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2"
+        }
+      ],
+      "author": "CFDE / cfde-blank DCC",
+      "description": "The Frictionless Data Package descriptor (JSON Table Schema) defining all 58 C2M2 table fields, primary keys, and foreign-key relationships for this instance \u2014 the authoritative relational contract, preserved verbatim so the full model survives even for tables omitted from @graph.",
+      "version": "0.1.0",
+      "contentUrl": "file:///C2M2_datapackage.json",
+      "usedByComputation": [],
+      "fairscapeVersion": "1.1.3",
+      "prov:wasGeneratedBy": [],
+      "prov:wasDerivedFrom": [],
+      "prov:wasAttributedTo": [
+        "CFDE / cfde-blank DCC"
+      ],
+      "additionalType": "File",
+      "datePublished": "2026-07-07",
+      "keywords": [
+        "C2M2",
+        "preservation",
+        "frictionless-datapackage-descriptor"
+      ],
+      "format": "application/json",
+      "generatedBy": [],
+      "derivedFrom": [],
+      "contentSize": "126500",
+      "cfde:role": "frictionless-datapackage-descriptor"
+    },
+    {
+      "@id": "ark:59853/cfde-blank-c2m2-conversion",
+      "@type": [
+        "prov:Activity",
+        "https://w3id.org/EVI#Computation"
+      ],
+      "name": "C2M2 to RO-Crate conversion (cfde-blank)",
+      "isPartOf": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2"
+        }
+      ],
+      "description": "Conversion of the cfde-blank C2M2 Frictionless datapackage into this RO-Crate: one Dataset + evi:Schema per populated table, the file table additionally exploded into file-level source-data entities, and the datapackage.json + SQLite preserved verbatim.",
+      "generated": [],
+      "prov:used": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-converter-software"
+        },
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-datapackage-json"
+        }
+      ],
+      "prov:wasAssociatedWith": [
+        "CFDE / cfde-blank DCC"
+      ],
+      "fairscapeVersion": "1.1.3",
+      "additionalType": "Computation",
+      "runBy": "CFDE / cfde-blank DCC",
+      "dateCreated": "2026-07-07",
+      "command": "python3 convert.py examples/cfde-blank --output-path test-data/example-crates/cfde-blank-c2m2-crate",
+      "usedSoftware": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-converter-software"
+        }
+      ],
+      "usedMLModel": [],
+      "usedDataset": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2-datapackage-json"
+        }
+      ],
+      "evi:annotatedBy": []
+    },
+    {
+      "@id": "ark:59853/cfde-blank-c2m2-converter-software",
+      "@type": [
+        "prov:Entity",
+        "https://w3id.org/EVI#Software"
+      ],
+      "name": "CFDE C2M2 to RO-Crate Converter",
+      "isPartOf": [
+        {
+          "@id": "ark:59853/cfde-blank-c2m2"
+        }
+      ],
+      "author": "CFDE / FAIRSCAPE",
+      "description": "Reference converter that reads a C2M2 Frictionless datapackage (datapackage.json + TSVs + SQLite) and emits a FAIRSCAPE RO-Crate following the C2M2-to-ROCrate design spec.",
+      "version": "0.1.0",
+      "usedByComputation": [],
+      "fairscapeVersion": "1.1.3",
+      "prov:wasGeneratedBy": [],
+      "prov:wasDerivedFrom": [],
+      "prov:wasAttributedTo": [
+        "CFDE / FAIRSCAPE"
+      ],
+      "additionalType": "Software",
+      "format": "text/x-python",
+      "url": "https://github.com/fairscape"
+    }
+  ]
+}

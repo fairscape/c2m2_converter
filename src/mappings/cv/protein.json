@@ -1,0 +1,37 @@
+{
+  "_doc": "C2M2 protein CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. The 'id' column is a bare UniProtKB accession (resolved via the protein source_table). 'organism' is preserved in additionalProperty; 'usedBy' back-references biosamples that cite this protein.",
+  "source_table": "protein",
+  "entity_type": "DefinedTerm",
+  "order": 41,
+
+  "cv_source": {"column": "id", "source_table": "protein"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "protein"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-protein"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "protein"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 protein controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "organism", "source": "organism", "parser": "property_value"},
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "protein"}
+  ],
+
+  "associations": [
+    {
+      "assoc_table": "biosample_protein",
+      "match": {"columns": ["protein"], "resolver": "ontology_term", "source_table": "protein"},
+      "value": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_guid", "entity": "biosample"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

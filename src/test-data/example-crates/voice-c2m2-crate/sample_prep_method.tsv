@@ -1,0 +1,5 @@
+id	name	description	synonyms
+OBI:0003501	functional assessment of individual	A physical examination of an organism's ability to perform functional activities.	[]
+OBI:0003529	spontaneous speech assessment	A functional assessment of an individual's ability to articulate spoken words.	[]
+OBI:0003504	forced cough assessment	A functional assessment of an individual's ability to cough forcefully.	[]
+OBI:0003505	speech test assessment	A functional assessment of an individual's ability to understandably repeat spoken sentences.	[]

@@ -1,0 +1,44 @@
+{
+  "_doc": "C2M2 file_format CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. 'usedBy' back-references files whose file_format or compression_format column resolves to this EDAM format term.",
+  "source_table": "file_format",
+  "entity_type": "DefinedTerm",
+  "order": 36,
+
+  "cv_source": {"column": "id", "source_table": "file_format"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "file_format"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-file_format"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "file_format"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 file format controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "file_format"}
+  ],
+
+  "associations": [
+    {
+      "assoc_table": "file",
+      "match": {"columns": ["file_format"], "resolver": "ontology_term", "source_table": "file_format"},
+      "value": {"columns": ["id_namespace", "local_id"], "resolver": "entity_guid", "entity": "file"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "compression_format is drawn from the same EDAM format CV as file_format.",
+      "assoc_table": "file",
+      "match": {"columns": ["compression_format"], "resolver": "ontology_term", "source_table": "file_format"},
+      "value": {"columns": ["id_namespace", "local_id"], "resolver": "entity_guid", "entity": "file"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

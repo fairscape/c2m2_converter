@@ -1,0 +1,39 @@
+{
+  "_doc": "Declarative RO-Crate root. 'identity' documents what the engine derives from the dcc + id_namespace tables (via C2M2ToROCrateMapper._resolve_metadata) and supplies the ARK naan. 'context_vars' documents the author/publisher/date defaults. 'fields' is what the engine actually writes onto the root node (ROCrateMetadataElem). Each field lists its source branches and the engine tries them in precedence order (override > meta > const > template > computed), falling through on a null result -- so a field can chain, e.g. name = override('$name_arg') -> meta('project_name') -> template(dcc default). {meta:<key>} reads the resolved identity (incl. project_name/project_description/project_identifier from the top-level project row); {const:...}; {template:...} interpolates {dcc_label},{slug},{populated_list},{total_tables},{empty_count},...; {computed:<primitive>}. A CLI flag named by 'override' (e.g. $name_arg = --name) always wins.",
+
+  "identity": {
+    "naan": "59853",
+    "slug": {"source": "dcc", "column": "dcc_abbreviation", "fallback": "$dir_name", "transform": "slug"},
+    "dcc_label": {"source": "dcc", "column": "dcc_name", "fallback": "$dir_name"},
+    "namespaces": {"source": "id_namespace", "column": "id", "multi": true},
+    "crate_guid": "ark:{naan}/{slug}-c2m2",
+    "conversion_guid": "{crate_guid}-conversion",
+    "software_guid": "{crate_guid}-converter-software"
+  },
+
+  "context_vars": {
+    "author": {"template": "CFDE / {dcc_label} DCC", "override": "$author_arg"},
+    "publisher": {"const": "NIH Common Fund Data Ecosystem", "override": "$publisher_arg"},
+    "date": {"computed": "today_or_arg"}
+  },
+
+  "fields": {
+    "@id": {"meta": "crate_guid"},
+    "@type": {"const": ["Dataset", "https://w3id.org/EVI#ROCrate"]},
+    "name": {"override": "$name_arg", "meta": "project_name", "template": "{dcc_label} — C2M2 Metadata Instance (RO-Crate)"},
+    "description": {"override": "$description_arg", "meta": "project_description", "template": "RO-Crate packaging of the CFDE C2M2 Frictionless datapackage for the {dcc_label} dataset. It preserves the C2M2 relational tables (TSV), the datapackage schema, and the SQLite relational index verbatim, and overlays schema.org/EVI provenance plus file-level links back to the source data. The relational contract (primary/foreign keys) travels as cfde:* extension fields so the C2M2 relational model can be reconstituted."},
+    "keywords": {"override": "$keywords_arg", "const": ["CFDE", "C2M2", "{dcc_label}", "metadata", "RO-Crate", "Frictionless", "provenance"]},
+    "version": {"computed": "version_arg", "default": "1.0"},
+    "author": {"meta": "author"},
+    "publisher": {"meta": "publisher"},
+    "datePublished": {"meta": "date"},
+    "license": {"computed": "license_arg"},
+    "isPartOf": {"computed": "cfde_and_namespaces"},
+    "hasPart": {"computed": "all_element_guids"},
+    "identifier": {"override": "$identifier_arg", "meta": "project_identifier"},
+    "cfde:c2m2Level": {"const": "1"},
+    "cfde:tablesTotal": {"computed": "tables_total"},
+    "cfde:tablesPopulated": {"computed": "tables_populated"},
+    "cfde:emptyTablesNote": {"template": "{empty_count} of the {total_tables} C2M2 tables are empty for this instance and are omitted from @graph; their full schema (fields/PK/FK) is preserved in C2M2_datapackage.json. Populated tables: {populated_list}."}
+  }
+}

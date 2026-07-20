@@ -1,0 +1,146 @@
+{
+  "_doc": "C2M2 collection table -> EVI#Sample per row (modeled like biosample.json). A C2M2 collection is an arbitrary grouping of files/biosamples/subjects/sub-collections; Sample is reused because its native bio fields carry the collection's annotations as typed IdentifierValue edges (anatomy->anatomicalStructure, disease->associatedDisease, gene/protein/substance/compound->hasBioChemEntityPart), all sharing @id identity with the CV DefinedTerm nodes. Membership link tables (biosample/subject/file/collection_in_collection) become hasPart/isPartOf edges (Sample extra=allow). collection_phenotype->healthCondition and collection_taxonomy->taxonomicRange are extra typed edges; collection_defined_by_project is kept as a PropertyValue because no per-row project node exists yet. If a dedicated Collection entity model is later added to ENTITY_MODELS, only entity_type needs to change.",
+  "source_table": "collection",
+  "entity_type": "Sample",
+  "order": 30,
+
+  "computed": {
+    "eff_name": {"first_nonempty": ["name", "abbreviation", "local_id"]},
+    "desc_clause": {"template": " {description}", "when": "description"}
+  },
+
+  "id": {"strategy": "persistent_ark_or_mint", "column": "persistent_id", "mint": "{prefix}-collection/{local_id}"},
+
+  "fields": [
+    {"_note": "External persistent identifier; when it is not an ARK the @id is a minted crate ARK instead (id.strategy persistent_ark_or_mint).", "source": "persistent_id", "target": "identifier", "parser": "external_pid"}
+  ],
+
+  "constants": {
+    "name": "C2M2 collection {eff_name}",
+    "author": "{author}",
+    "keywords": ["C2M2", "collection", "{dcc_label}"],
+    "description": "C2M2 collection {eff_name} from the {dcc_label} instance.{desc_clause}",
+    "isPartOf": [{"@id": "{prefix}-table-collection"}, {"@id": "{crate_guid}"}]
+  },
+
+  "additional_property": [
+    {"name": "id_namespace", "source": "id_namespace", "parser": "property_value"},
+    {"name": "local_id", "source": "local_id", "parser": "property_value"},
+    {"name": "persistent_id", "source": "persistent_id", "parser": "property_value"},
+    {"name": "creation_time", "source": "creation_time", "parser": "property_value"},
+    {"name": "abbreviation", "source": "abbreviation", "parser": "property_value"},
+    {"name": "has_time_series_data", "source": "has_time_series_data", "parser": "property_value"}
+  ],
+
+  "associations": [
+    {
+      "_note": "Members: biosamples assigned to this collection become hasPart edges to the Sample nodes (biosample.json order 20).",
+      "assoc_table": "biosample_in_collection",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_guid", "entity": "biosample"},
+      "targets": ["hasPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Members: subjects assigned to this collection -> hasPart edges to the Patient nodes (subject.json order 10).",
+      "assoc_table": "subject_in_collection",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_guid", "entity": "subject"},
+      "targets": ["hasPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Members: files assigned to this collection -> hasPart edges to the Dataset(File) nodes (file.json order 5).",
+      "assoc_table": "file_in_collection",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["file_id_namespace", "file_local_id"], "resolver": "entity_guid", "entity": "file"},
+      "targets": ["hasPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Nested collections: this collection as the SUPERSET -> each subset collection is a hasPart. Self-reference resolves because guid_maps is built for every entity table before associations.",
+      "assoc_table": "collection_in_collection",
+      "match": {"columns": ["superset_collection_id_namespace", "superset_collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["subset_collection_id_namespace", "subset_collection_local_id"], "resolver": "entity_guid", "entity": "collection"},
+      "targets": ["hasPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Nested collections: this collection as the SUBSET -> its superset collection is an isPartOf (appends to the constant isPartOf list).",
+      "assoc_table": "collection_in_collection",
+      "match": {"columns": ["subset_collection_id_namespace", "subset_collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["superset_collection_id_namespace", "superset_collection_local_id"], "resolver": "entity_guid", "entity": "collection"},
+      "targets": ["isPartOf"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Sample.anatomicalStructure is single-valued (one biosample = one site), but a collection's anatomy is a many-to-many set. Fold it into the list-typed hasBioChemEntityPart alongside biofluid (biosample.json does the same for biofluid) so the typed CV @id edge + usedBy back-reference survive.",
+      "assoc_table": "collection_anatomy",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["anatomy"], "resolver": "ontology_term", "source_table": "anatomy"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "collection_disease has no association_type column (unlike biosample_disease/subject_disease), so every row is an asserted association -- no :0/:1 filter.",
+      "assoc_table": "collection_disease",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "targets": ["associatedDisease"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Phenotype has no native Sample field; healthCondition (schema.org, mirrors subject.json) carries it as a typed edge via extra=allow.",
+      "assoc_table": "collection_phenotype",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["phenotype"], "resolver": "ontology_term", "source_table": "phenotype"},
+      "targets": ["healthCondition"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "collection_gene",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["gene"], "resolver": "ontology_term", "source_table": "gene"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "collection_protein",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["protein"], "resolver": "ontology_term", "source_table": "protein"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "collection_substance",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["substance"], "resolver": "ontology_term", "source_table": "substance"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "collection_compound",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["compound"], "resolver": "ontology_term", "source_table": "compound"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "collection_taxonomy.taxon carries the 'NCBI:txid...' prefix, resolved to an NCBITaxon IRI; taxonomicRange (schema.org BioChemEntity) is the typed target via extra=allow.",
+      "assoc_table": "collection_taxonomy",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["taxon"], "resolver": "ontology_term", "source_table": "ncbi_taxonomy"},
+      "targets": ["taxonomicRange"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "No per-row project node exists yet (project.tsv is unmapped), so the defining project FK is preserved as a PropertyValue rather than a dangling @id. Promote to a generatedBy/isPartOf edge once project.json lands.",
+      "assoc_table": "collection_defined_by_project",
+      "match": {"columns": ["collection_id_namespace", "collection_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["project_local_id"], "resolver": "raw"},
+      "targets": ["additionalProperty"],
+      "wrap": "property_value",
+      "pv_name": "defined_by_project"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "_doc": "C2M2 biofluid CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. 'usedBy' back-references biosamples whose biofluid column resolves to this UBERON term.",
+  "source_table": "biofluid",
+  "entity_type": "DefinedTerm",
+  "order": 31,
+
+  "cv_source": {"column": "id", "source_table": "biofluid"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "biofluid"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-biofluid"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "biofluid"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 biofluid controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "biofluid"}
+  ],
+
+  "associations": [
+    {
+      "assoc_table": "biosample",
+      "match": {"columns": ["biofluid"], "resolver": "ontology_term", "source_table": "biofluid"},
+      "value": {"columns": ["id_namespace", "local_id"], "resolver": "entity_guid", "entity": "biosample"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "_doc": "C2M2 ncbi_taxonomy CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. The 'clade' column is preserved in additionalProperty; 'usedBy' back-references subjects whose subject_role_taxonomy row cites this NCBITaxon term.",
+  "source_table": "ncbi_taxonomy",
+  "entity_type": "DefinedTerm",
+  "order": 39,
+
+  "cv_source": {"column": "id", "source_table": "ncbi_taxonomy"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "ncbi_taxonomy"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-ncbi_taxonomy"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "ncbi_taxonomy"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 NCBI taxonomy controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "clade", "source": "clade", "parser": "property_value"},
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "ncbi_taxonomy"}
+  ],
+
+  "associations": [
+    {
+      "assoc_table": "subject_role_taxonomy",
+      "match": {"columns": ["taxonomy_id"], "resolver": "ontology_term", "source_table": "ncbi_taxonomy"},
+      "value": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_guid", "entity": "subject"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

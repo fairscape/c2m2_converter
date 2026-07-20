@@ -1,0 +1,26 @@
+{
+  "_doc": "C2M2 compound CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. The 'id' column is a bare PubChem Compound CID or GlyTouCan accession (resolved via the compound source_table). No 'usedBy' back-reference: compounds are cited only via substance.compound and collection_compound, neither of which is an exploded @graph entity, so there is no node to point back at.",
+  "source_table": "compound",
+  "entity_type": "DefinedTerm",
+  "order": 43,
+
+  "cv_source": {"column": "id", "source_table": "compound"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "compound"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-compound"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "compound"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 compound controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "compound"}
+  ]
+}

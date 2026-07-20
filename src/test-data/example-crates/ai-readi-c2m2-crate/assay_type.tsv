@@ -1,0 +1,9 @@
+id	name	description	synonyms
+SNOMED:268400002	12 lead electrocardiogram		
+FBBI:00000368	FLIM	Flourescence Lifetime imaging microscopy	
+FBBI:00000371	Optical coherence tomography		
+FBBI:00000222	Imaging Method		
+MEDDRA:10079764	Continuous Glucose Monitoring		
+LOINC:MTHU054669	Clinical Data		
+SNOMED:468916005	Environmental Sensor		
+LOINC:MTHU017278	Physical Activity		

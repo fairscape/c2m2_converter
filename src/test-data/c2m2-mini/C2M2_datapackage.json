@@ -1,0 +1,135 @@
+{
+  "name": "c2m2-mini",
+  "profile": "data-package",
+  "title": "Minimal C2M2 datapackage fixture",
+  "resources": [
+    {
+      "profile": "tabular-data-resource",
+      "name": "id_namespace",
+      "path": "id_namespace.tsv",
+      "title": "Namespaces",
+      "description": "Top-level identifier namespaces.",
+      "schema": {
+        "fields": [
+          { "name": "id", "type": "string", "description": "Namespace id." },
+          { "name": "name", "type": "string", "description": "Namespace name." }
+        ],
+        "primaryKey": "id"
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "project",
+      "path": "project.tsv",
+      "title": "Projects",
+      "description": "Projects within a namespace.",
+      "schema": {
+        "fields": [
+          { "name": "id_namespace", "type": "string", "description": "Namespace of this project.", "constraints": { "required": true } },
+          { "name": "local_id", "type": "string", "description": "Local id of this project.", "constraints": { "required": true } },
+          { "name": "name", "type": "string", "description": "Project name." }
+        ],
+        "primaryKey": ["id_namespace", "local_id"],
+        "foreignKeys": [
+          { "fields": "id_namespace", "reference": { "resource": "id_namespace", "fields": "id" } }
+        ]
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "file_format",
+      "path": "file_format.tsv",
+      "title": "File formats",
+      "description": "EDAM CV file-format terms.",
+      "schema": {
+        "fields": [
+          { "name": "id", "type": "string", "description": "An EDAM CV term id identifying the digital format.", "constraints": { "required": true, "unique": true } },
+          { "name": "name", "type": "string", "description": "Term name." }
+        ],
+        "primaryKey": "id"
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "file",
+      "path": "file.tsv",
+      "title": "Files",
+      "description": "The C2M2 file table — a stable digital-asset inventory.",
+      "schema": {
+        "fields": [
+          { "name": "id_namespace", "type": "string", "description": "Namespace containing this file.", "constraints": { "required": true } },
+          { "name": "local_id", "type": "string", "description": "Local id of this file.", "constraints": { "required": true } },
+          { "name": "project_id_namespace", "type": "string", "description": "Namespace of the project.", "constraints": { "required": true } },
+          { "name": "project_local_id", "type": "string", "description": "Local id of the project.", "constraints": { "required": true } },
+          { "name": "persistent_id", "type": "string", "description": "A persistent, resolvable identifier (minid / DRS / DOI)." },
+          { "name": "size_in_bytes", "type": "integer", "description": "The size of this file in bytes." },
+          { "name": "sha256", "type": "string", "description": "SHA-256 checksum for this file." },
+          { "name": "filename", "type": "string", "description": "A filename with no path.", "constraints": { "required": true } },
+          { "name": "file_format", "type": "string", "description": "An EDAM CV term id identifying the digital format of this file." },
+          { "name": "mime_type", "type": "string", "description": "A MIME type describing this file." },
+          { "name": "access_url", "type": "string", "description": "A publicly accessible download URL." }
+        ],
+        "primaryKey": ["id_namespace", "local_id"],
+        "foreignKeys": [
+          { "fields": "id_namespace", "reference": { "resource": "id_namespace", "fields": "id" } },
+          { "fields": ["project_id_namespace", "project_local_id"], "reference": { "resource": "project", "fields": ["id_namespace", "local_id"] } },
+          { "fields": "file_format", "reference": { "resource": "file_format", "fields": "id" } }
+        ]
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "biosample",
+      "path": "biosample.tsv",
+      "title": "Biosamples",
+      "description": "The C2M2 biosample table.",
+      "schema": {
+        "fields": [
+          { "name": "id_namespace", "type": "string", "description": "Namespace containing this biosample.", "constraints": { "required": true } },
+          { "name": "local_id", "type": "string", "description": "Local id of this biosample.", "constraints": { "required": true } },
+          { "name": "project_id_namespace", "type": "string", "description": "Namespace of the project.", "constraints": { "required": true } },
+          { "name": "project_local_id", "type": "string", "description": "Local id of the project.", "constraints": { "required": true } }
+        ],
+        "primaryKey": ["id_namespace", "local_id"],
+        "foreignKeys": [
+          { "fields": "id_namespace", "reference": { "resource": "id_namespace", "fields": "id" } },
+          { "fields": ["project_id_namespace", "project_local_id"], "reference": { "resource": "project", "fields": ["id_namespace", "local_id"] } }
+        ]
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "file_describes_biosample",
+      "path": "file_describes_biosample.tsv",
+      "title": "file_describes_biosample",
+      "description": "Association table: a file describes a biosample.",
+      "schema": {
+        "fields": [
+          { "name": "file_id_namespace", "type": "string", "description": "Namespace of the file.", "constraints": { "required": true } },
+          { "name": "file_local_id", "type": "string", "description": "Local id of the file.", "constraints": { "required": true } },
+          { "name": "biosample_id_namespace", "type": "string", "description": "Namespace of the biosample.", "constraints": { "required": true } },
+          { "name": "biosample_local_id", "type": "string", "description": "Local id of the biosample.", "constraints": { "required": true } }
+        ],
+        "primaryKey": ["file_id_namespace", "file_local_id", "biosample_id_namespace", "biosample_local_id"],
+        "foreignKeys": [
+          { "fields": ["file_id_namespace", "file_local_id"], "reference": { "resource": "file", "fields": ["id_namespace", "local_id"] } },
+          { "fields": ["biosample_id_namespace", "biosample_local_id"], "reference": { "resource": "biosample", "fields": ["id_namespace", "local_id"] } }
+        ]
+      }
+    },
+    {
+      "profile": "tabular-data-resource",
+      "name": "subject",
+      "path": "subject.tsv",
+      "title": "Subjects",
+      "description": "The C2M2 subject table (empty in this fixture).",
+      "schema": {
+        "fields": [
+          { "name": "id_namespace", "type": "string", "description": "Namespace containing this subject.", "constraints": { "required": true } },
+          { "name": "local_id", "type": "string", "description": "Local id of this subject.", "constraints": { "required": true } }
+        ],
+        "primaryKey": ["id_namespace", "local_id"]
+      }
+    }
+  ]
+}

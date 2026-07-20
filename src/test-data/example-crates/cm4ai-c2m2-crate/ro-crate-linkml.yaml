@@ -1,0 +1,23 @@
+conforms_to: D4D Schema
+created_by: CFDE / Cell Maps for Artificial Intelligence DCC
+creators:
+- description: CFDE / Cell Maps for Artificial Intelligence DCC
+description: The CM4AI data generation project seeks to map the spatiotemporal architecture
+  of human cells and use these maps toward the grand challenge of interpretable genotype-phenotype
+  learning.  It computes hierarchical cell maps using AI/ML methods, on protein interaction
+  and localization data, with perturb seq data, for disease relevant cell lines, and
+  provides data in AI-ready form.
+id: ark:59853/cm4ai-c2m2
+keywords:
+- CFDE
+- C2M2
+- Cell Maps for Artificial Intelligence
+- metadata
+- RO-Crate
+- Frictionless
+- provenance
+license: https://creativecommons.org/licenses/by/4.0/
+name: Cell Maps for Artificial Intelligence
+publisher: NIH Common Fund Data Ecosystem
+title: Cell Maps for Artificial Intelligence
+version: '1.0'

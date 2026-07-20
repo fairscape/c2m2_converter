@@ -1,0 +1,45 @@
+{
+  "_doc": "C2M2 disease CV term table -> one schema.org DefinedTerm per row. All 14 C2M2 controlled-vocabulary tables share this shape (they live together under mappings/cv/ as a class of their own): @id is the resolved ontology IRI (so an edge pointing at the term lands on this node); name<-name (falls back to the CURIE); termCode<-the raw CV id (CURIE); identifier<-the resolved ontology IRI; description<-description (falls back to a generated sentence); synonym<-the parsed 'synonyms' JSON array. 'usedBy' back-references the biosamples/subjects that cite this term.",
+  "source_table": "disease",
+  "entity_type": "DefinedTerm",
+  "order": 37,
+
+  "cv_source": {"column": "id", "source_table": "disease"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "disease"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-disease"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "disease"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 disease controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "disease"}
+  ],
+
+  "associations": [
+    {
+      "_note": "Back-reference: match is THIS disease node (resolved from biosample_disease.disease); the value is the biosample that used it.",
+      "assoc_table": "biosample_disease",
+      "match": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "value": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_guid", "entity": "biosample"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Back-reference: subjects that cite this disease (observed or ruled-out both count as 'used').",
+      "assoc_table": "subject_disease",
+      "match": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "value": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_guid", "entity": "subject"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

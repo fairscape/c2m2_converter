@@ -1,0 +1,81 @@
+{
+  "_doc": "C2M2 biosample table -> EVI#Sample per row. Reproduces v0.2 _biosample_nodes. anatomy -> anatomicalStructure and sample_prep_method -> samplePrepMethod are native IdentifierValue fields; biofluid plus the biosample_gene/substance/protein/ptm link tables all append into the hasBioChemEntityPart list; the source subject becomes a prov:wasDerivedFrom edge.",
+  "source_table": "biosample",
+  "entity_type": "Sample",
+  "order": 20,
+
+  "id": {"strategy": "persistent_ark_or_mint", "column": "persistent_id", "mint": "{prefix}-biosample/{local_id}"},
+
+  "constants": {
+    "name": "C2M2 biosample {local_id}",
+    "author": "{author}",
+    "keywords": ["C2M2", "biosample", "{dcc_label}"],
+    "description": "C2M2 biosample {local_id} from the {dcc_label} instance.",
+    "isPartOf": [{"@id": "{prefix}-table-biosample"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"_note": "External persistent identifier; when it is not an ARK the @id is a minted crate ARK instead (id.strategy persistent_ark_or_mint).", "source": "persistent_id", "target": "identifier", "parser": "external_pid"},
+    {"source": "anatomy", "target": "anatomicalStructure", "parser": "identifier_value_term", "source_table": "anatomy"},
+    {"source": "sample_prep_method", "target": "samplePrepMethod", "parser": "identifier_value_term", "source_table": "sample_prep_method"},
+    {"source": "biofluid", "target": "hasBioChemEntityPart", "parser": "identifier_value_term_list", "source_table": "biofluid"}
+  ],
+
+  "additional_property": [
+    {"name": "id_namespace", "source": "id_namespace", "parser": "property_value"},
+    {"name": "local_id", "source": "local_id", "parser": "property_value"},
+    {"name": "persistent_id", "source": "persistent_id", "parser": "property_value"},
+    {"name": "creation_time", "source": "creation_time", "parser": "property_value"},
+    {"name": "project_local_id", "source": "project_local_id", "parser": "property_value"}
+  ],
+
+  "associations": [
+    {
+      "_note": "The source subject becomes a real PROV wasDerivedFrom edge (Sample extra=allow).",
+      "assoc_table": "biosample_from_subject",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_guid", "entity": "subject"},
+      "targets": ["prov:wasDerivedFrom"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Observed (:1) disease associations only. Filter on the CV code suffix, never the label -- the datapackage field description lists the two example labels in reverse order.",
+      "assoc_table": "biosample_disease",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "targets": ["associatedDisease"],
+      "wrap": "ident_ref",
+      "filter": {"column": "association_type", "endswith": ":1"}
+    },
+    {
+      "assoc_table": "biosample_gene",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["gene"], "resolver": "ontology_term", "source_table": "gene"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "biosample_substance",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["substance"], "resolver": "ontology_term", "source_table": "substance"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Not present in the cfde-sample datapackage: assumes biosample_protein has a 'protein' column resolved via the protein bare-accession base. Confirm the column name + CV against a dataset that carries it.",
+      "assoc_table": "biosample_protein",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["protein"], "resolver": "ontology_term", "source_table": "protein"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    },
+    {
+      "_note": "Not present in the cfde-sample datapackage, and 'ptm' has no ontology base in resolve_term, so values mint a crate-local {prefix}-cv/ptm/... id until a real CV mapping exists. Confirm the column name.",
+      "assoc_table": "biosample_ptm",
+      "match": {"columns": ["biosample_id_namespace", "biosample_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["ptm"], "resolver": "ontology_term", "source_table": "ptm"},
+      "targets": ["hasBioChemEntityPart"],
+      "wrap": "ident_ref"
+    }
+  ]
+}

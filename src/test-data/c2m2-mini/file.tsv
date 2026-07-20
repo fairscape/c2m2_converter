@@ -1,0 +1,3 @@
+id_namespace	local_id	project_id_namespace	project_local_id	persistent_id	size_in_bytes	sha256	filename	file_format	mime_type	access_url
+mini	sample.tsv	mini	proj1		2363	e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855	sample.tsv	format:3475	text/tab-separated-values	https://example.org/files/sample.tsv?download
+mini	data.bin	mini	proj1	ark:99999/data-bin	100		data.bin			

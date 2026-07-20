@@ -1,0 +1,5 @@
+id	name	description	synonyms
+format:1964	plain text format (unformatted)	Plain text sequence format (essentially unformatted).	[]
+format:2333	Binary format	Binary format.	[]
+format:3464	JSON	JavaScript Object Notation format; a lightweight, text-based format to represent tree-structured data using key-value pairs.	
+format:3475	TSV	Tabular data represented as tab-separated values in a text file.	

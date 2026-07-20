@@ -1,0 +1,38 @@
+{
+  "_doc": "C2M2 file table -> one Dataset (additionalType File) per row, linking back to source data. Reproduces the v0.1 _file_entities row-explosion. 'generated: true' places these in the conversion Computation.generated (they are the source-data bridge nodes the conversion emits).",
+  "source_table": "file",
+  "entity_type": "Dataset",
+  "order": 5,
+  "generated": true,
+  "extra_type": {"additionalType": "File"},
+
+  "computed": {
+    "eff_local_id": {"first_nonempty": ["local_id", "filename"]},
+    "eff_filename": {"first_nonempty": ["filename", "local_id"]}
+  },
+
+  "id": {"strategy": "persistent_ark_or_mint", "column": "persistent_id", "mint": "{prefix}-file/{eff_local_id}"},
+
+  "constants": {
+    "name": "{eff_filename}",
+    "author": "{author}",
+    "datePublished": "{date}",
+    "keywords": ["C2M2", "file", "source-data"],
+    "description": "Source data file '{eff_filename}', an individual record exploded from the C2M2 file table (id_namespace={id_namespace}, local_id={eff_local_id}). Its contentUrl links back to the source data. This is the source-data bridge from C2M2 metadata to actual data.",
+    "isPartOf": [{"@id": "{crate_guid}"}],
+    "cfde:c2m2Entity": "file",
+    "cfde:idNamespace": "{id_namespace}",
+    "cfde:localId": "{eff_local_id}",
+    "cfde:describedByC2M2Table": {"@id": "{prefix}-table-file"}
+  },
+
+  "fields": [
+    {"_note": "External persistent identifier (DOI/Cellosaurus/n2t ARK). Preserved here; when it is not an ARK the @id is a minted crate ARK instead (id.strategy persistent_ark_or_mint).", "source": "persistent_id", "target": "identifier", "parser": "external_pid"},
+    {"source": "mime_type", "target": "format", "parser": "scalar_default", "default": "application/octet-stream"},
+    {"source": "access_url", "target": "contentUrl", "parser": "first_nonempty", "fallbacks": ["persistent_id"]},
+    {"source": "sha256", "target": "sha256", "parser": "scalar"},
+    {"source": "md5", "target": "md5", "parser": "scalar"},
+    {"source": "size_in_bytes", "target": "contentSize", "parser": "scalar"},
+    {"source": "file_format", "target": "encodingFormat", "parser": "edam_encoding"}
+  ]
+}

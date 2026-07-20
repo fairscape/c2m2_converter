@@ -1,0 +1,82 @@
+{
+  "_doc": "C2M2 subject table -> schema.org Patient per row. Reproduces v0.2 _subject_nodes. Native fields: gender (from CFDE sex CV via sex_map, currently unmapped -> null), diagnosis/healthCondition/drug (from association tables). Everything else is preserved as schema.org PropertyValue in additionalProperty.",
+  "source_table": "subject",
+  "entity_type": "Patient",
+  "order": 10,
+
+  "id": {"strategy": "persistent_ark_or_mint", "column": "persistent_id", "mint": "{prefix}-subject/{local_id}"},
+
+  "constants": {
+    "name": "C2M2 subject {local_id}",
+    "sdPublisher": "{publisher}",
+    "isPartOf": [{"@id": "{prefix}-table-subject"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"_note": "External persistent identifier; when it is not an ARK the @id is a minted crate ARK instead (id.strategy persistent_ark_or_mint).", "source": "persistent_id", "target": "identifier", "parser": "external_pid"},
+    {"source": "sex", "target": "gender", "parser": "sex_map"}
+  ],
+
+  "additional_property": [
+    {"name": "id_namespace", "source": "id_namespace", "parser": "property_value"},
+    {"name": "local_id", "source": "local_id", "parser": "property_value"},
+    {"name": "persistent_id", "source": "persistent_id", "parser": "property_value"},
+    {"name": "creation_time", "source": "creation_time", "parser": "property_value"},
+    {"name": "granularity", "source": "granularity", "parser": "property_value"},
+    {"name": "sex", "source": "sex", "parser": "property_value"},
+    {"name": "ethnicity", "source": "ethnicity", "parser": "property_value"},
+    {"name": "age_at_enrollment", "source": "age_at_enrollment", "parser": "property_value"}
+  ],
+
+  "associations": [
+    {
+      "_note": "CFDE disease_association_type CV code :1 == observed. Filter on the CODE suffix, never the label -- the datapackage field description lists the two example labels in reverse order.",
+      "assoc_table": "subject_disease",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "targets": ["diagnosis", "healthCondition"],
+      "wrap": "ident_ref",
+      "filter": {"column": "association_type", "endswith": ":1"}
+    },
+    {
+      "assoc_table": "subject_phenotype",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["phenotype"], "resolver": "ontology_term", "source_table": "phenotype"},
+      "targets": ["healthCondition"],
+      "wrap": "ident_ref",
+      "filter": {"column": "association_type", "endswith": ":1"}
+    },
+    {
+      "assoc_table": "subject_substance",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["substance"], "resolver": "ontology_term", "source_table": "substance"},
+      "targets": ["drug"],
+      "wrap": "ident_ref"
+    },
+    {
+      "assoc_table": "subject_race",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["race"], "resolver": "raw"},
+      "targets": ["additionalProperty"],
+      "wrap": "property_value",
+      "pv_name": "race"
+    },
+    {
+      "_note": "Ruled-out (:0) is a NEGATIVE assertion: preserved as a ruledOutCondition PropertyValue, never asserted as a healthCondition/diagnosis.",
+      "assoc_table": "subject_disease",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["disease"], "resolver": "ontology_term", "source_table": "disease"},
+      "targets": ["additionalProperty"],
+      "wrap": "ruled_out_pv",
+      "filter": {"column": "association_type", "endswith": ":0"}
+    },
+    {
+      "assoc_table": "subject_phenotype",
+      "match": {"columns": ["subject_id_namespace", "subject_local_id"], "resolver": "entity_key"},
+      "value": {"columns": ["phenotype"], "resolver": "ontology_term", "source_table": "phenotype"},
+      "targets": ["additionalProperty"],
+      "wrap": "ruled_out_pv",
+      "filter": {"column": "association_type", "endswith": ":0"}
+    }
+  ]
+}

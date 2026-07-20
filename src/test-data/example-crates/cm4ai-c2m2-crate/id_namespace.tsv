@@ -1,0 +1,6 @@
+id	abbreviation	name	description
+cm4ai	cellmaps4ai	CM4AI Global Namspace	The ID namespace for the Global Cell Maps for AI  (CM4AI) project.
+cm4ai_ppi	ppi	CM4AI Protein-Protein Interaction Namespace	The ID namespace for the CM4AI Protein-Protein Interaction data acquisition subproject
+cm4ai_ploc	ploc	CM4AI Protein Localization Namespace	The ID namespace for the CM4AI Protein Localization data acqujisition subproject
+cm4ai_perturbseq	perturbseq	CM4AI Perturbseq Namespace	The ID namespace for the CM4AI PerturbSeq data acquisition sub project.
+cm4ai_cellmaps	cellmaps	CM4AI Hierarchical Cell Maps Namespace	The ID namespace for the CM4AI Hierarchical Cell Maps generation subproject. 

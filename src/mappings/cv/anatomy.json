@@ -1,0 +1,37 @@
+{
+  "_doc": "C2M2 anatomy CV term table -> one schema.org DefinedTerm per row. See mappings/cv/disease.json for the shared shape. 'usedBy' back-references biosamples whose anatomy column resolves to this UBERON term.",
+  "source_table": "anatomy",
+  "entity_type": "DefinedTerm",
+  "order": 30,
+
+  "cv_source": {"column": "id", "source_table": "anatomy"},
+
+  "id": {"strategy": "ontology_term", "column": "id", "source_table": "anatomy"},
+
+  "constants": {
+    "isPartOf": [{"@id": "{prefix}-table-anatomy"}, {"@id": "{crate_guid}"}]
+  },
+
+  "fields": [
+    {"source": "name", "target": "name", "parser": "name_or_curie"},
+    {"source": "id", "target": "termCode", "parser": "scalar"},
+    {"source": "id", "target": "identifier", "parser": "ontology_term", "source_table": "anatomy"},
+    {"source": "description", "target": "description", "parser": "description_or_template", "template": "C2M2 anatomy controlled-vocabulary term {curie}{onto_suffix}, referenced by the {dcc_label} instance."},
+    {"source": "synonyms", "target": "synonym", "parser": "json_string_list"}
+  ],
+
+  "additional_property": [
+    {"name": "c2m2CvTable", "parser": "property_value_const", "const": "anatomy"}
+  ],
+
+  "associations": [
+    {
+      "_note": "Back-reference: match is THIS anatomy node (resolved from the biosample.anatomy column); the value is the biosample carrying it.",
+      "assoc_table": "biosample",
+      "match": {"columns": ["anatomy"], "resolver": "ontology_term", "source_table": "anatomy"},
+      "value": {"columns": ["id_namespace", "local_id"], "resolver": "entity_guid", "entity": "biosample"},
+      "targets": ["usedBy"],
+      "wrap": "ident_ref"
+    }
+  ]
+}
