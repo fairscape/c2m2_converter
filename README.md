@@ -3,7 +3,7 @@
 C2M2 datapackage to FAIRSCAPE RO-Crate.
 
 ```
-python3 convert.py <datapackage-dir> [--output-path DIR] [--mappings-dir DIR] [overrides…]
+python3 convert.py <datapackage-dir> [--output-path DIR] 
 ```
 
 ## How it maps
