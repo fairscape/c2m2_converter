@@ -269,8 +269,10 @@ class MappingC2M2Converter(C2M2ToROCrateMapper):
         meta = self._resolve_metadata(author, publisher, date_published, naan)
 
         if output_path is None:
-            slug = meta["prefix"].rsplit("/", 1)[-1]
-            output_path = self.dir / f"{slug}-crate"
+            # Default: write the crate in place, alongside the datapackage's own files. The
+            # preservation copy below no-ops here (source == destination). Pass --output-path to
+            # emit a self-contained copy into a separate directory instead.
+            output_path = self.dir
         output_path = pathlib.Path(output_path)
         output_path.mkdir(parents=True, exist_ok=True)
         meta["output_path"] = str(output_path)
@@ -380,7 +382,9 @@ def main(argv=None):
     )
     parser.add_argument("datapackage_dir",
                         help="Directory holding C2M2_datapackage.json + per-table TSVs (+ .sqlite).")
-    parser.add_argument("--output-path", help="Output crate directory (default: <dir>/<dcc>-c2m2-crate).")
+    parser.add_argument("--output-path",
+                        help="Output crate directory. Default: write ro-crate-metadata.json in place, "
+                             "in the datapackage dir. Pass a path to emit a self-contained copy elsewhere.")
     parser.add_argument("--mappings-dir", help="Directory of mapping JSON files (default: ./mappings).")
     parser.add_argument("--name", help="Override the RO-Crate name.")
     parser.add_argument("--description", help="Override the RO-Crate description.")
