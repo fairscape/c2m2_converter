@@ -59,9 +59,6 @@ from parsers import (  # noqa: E402
     dedup_ident_refs,
 )
 
-# entity_type -> pydantic model. Every model's default @type normalizes into ROCrateV1_2.type_map,
-# so a node built here never silently degrades to GenericMetadataElem. Do NOT let a mapping name an
-# entity_type outside this table (guarded at load).
 ENTITY_MODELS = {
     "Patient": Patient,
     "Sample": Sample,
@@ -71,8 +68,6 @@ ENTITY_MODELS = {
     "Dataset": Dataset,
 }
 
-# Fields whose association values are {"@id": ...} reference lists (deduped, order-preserving).
-# Everything else that an association targets is treated as additionalProperty.
 _ADDITIONAL_PROPERTY = "additionalProperty"
 
 

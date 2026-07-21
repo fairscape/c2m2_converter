@@ -1,0 +1,5 @@
+# Runtime
+fairscape-models>=1.2.1
+
+# Tests
+pytest>=8

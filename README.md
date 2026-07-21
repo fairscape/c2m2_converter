@@ -2,8 +2,22 @@
 
 C2M2 datapackage to FAIRSCAPE RO-Crate.
 
+## Install
+
+Python 3.10+ is required. Install the dependencies (a virtualenv is recommended):
+
 ```
-python3 convert.py <datapackage-dir> [--output-path DIR] 
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+## Usage
+
+Run from the `src/` directory:
+
+```
+cd src
+python3 convert.py <datapackage-dir> [--output-path DIR]
 ```
 
 ## How it maps
